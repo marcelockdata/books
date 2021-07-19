@@ -18,7 +18,7 @@ namespace MHP.Books.API.Configuration
             services.AddScoped<IBookRepository, BookRepository>();
             services.AddScoped<IBookService, BookService>();
 
-            services.AddScoped<ISpecificationRepository, SpecificationRepository>();
+           
 
 
             services.AddScoped<INotificador, Notificador>();

@@ -18,7 +18,7 @@ namespace MHP.Books.Data.Mappings
              .IsRequired()
              .HasColumnType("numeric(18,2)");
 
-            // 1 : N => Fornecedor : Produtos
+            // 1 : N => Book : Specifications
             builder.HasMany(f => f.Specifications)
                 .WithOne(p => p.Book)
                 .HasForeignKey(p => p.BookId);
