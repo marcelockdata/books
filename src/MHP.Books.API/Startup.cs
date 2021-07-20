@@ -13,14 +13,7 @@ namespace MHP.Books.API
 {
     public class Startup
     {
-      /*  public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }*/
-
         public IConfiguration Configuration { get; }
-
-      
 
         public Startup(IHostEnvironment hostEnvironment)
         {
@@ -37,7 +30,7 @@ namespace MHP.Books.API
 
             Configuration = builder.Build();
         }
-        // This method gets called by the runtime. Use this method to add services to the container.
+       
         public void ConfigureServices(IServiceCollection services)
         {
 
@@ -68,12 +61,7 @@ namespace MHP.Books.API
               {
                   opt.SetEvaluationTimeInSeconds(15); //time in seconds between check
               }).AddInMemoryStorage();*/
-
-
-
-        }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        }      
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
 
