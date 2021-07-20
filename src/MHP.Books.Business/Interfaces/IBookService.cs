@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace MHP.Books.Business.Interfaces
 {
-    public interface IBookService
+    public interface IBookService: IDisposable
     {
         Task<bool> Adicionar(Book book);
         Task<bool> Atualizar(Book book);
