@@ -13,28 +13,46 @@ namespace MHP.Books.Data.Repository
 {
     public class BookRepository : Repository<Book>, IBookRepository
     {
-        private readonly IDistributedCache _cache;    
-        public BookRepository(DataDbContext context, IDistributedCache cache) : base(context) 
+        private readonly IDistributedCache _cache;
+        public BookRepository(DataDbContext context, IDistributedCache cache) : base(context)
         {
             _cache = cache;
         }
 
-        public async Task<IEnumerable<Book>> ObterTodosRedis()
-        {           
-         
-            var books = new List<Book>();
+        private IEnumerable<Book> GetFromCache(string cacheKey)
+        {
+            var cacheData = _cache.GetString(cacheKey);
 
-            var json = await _cache.GetStringAsync(CacheKeys.BOOK_GET_ALL);
-            if (json != null)
-            {
-                books = JsonSerializer.Deserialize<List<Book>>(json);
-            }
-            else
-            {
-                books = await DbSet.ToListAsync();
-                json = JsonSerializer.Serialize<List<Book>>(books);
-                await _cache.SetStringAsync(CacheKeys.BOOK_GET_ALL, json);
-            }
+            if (cacheData != null)
+                return JsonSerializer.Deserialize<IEnumerable<Book>>(cacheData);
+
+            return null;
+        }
+
+        private DistributedCacheEntryOptions GetCacheOptions(
+                                                    int slidingExpirationSecs = 0,
+                                                    int absoluteExpirationSecs = 0)
+        {
+            var cacheOptions = new DistributedCacheEntryOptions();
+
+            if (slidingExpirationSecs > 0)
+                cacheOptions.SetSlidingExpiration(TimeSpan.FromSeconds(slidingExpirationSecs)); // inactive
+
+            if (absoluteExpirationSecs > 0)
+                cacheOptions.SetAbsoluteExpiration(TimeSpan.FromSeconds(absoluteExpirationSecs)); // absolute
+
+            return cacheOptions;
+        }
+
+        public async Task<IEnumerable<Book>> ObterTodosRedis()
+        {
+            IEnumerable<Book> books = GetFromCache(CacheKeys.BOOK_GET_ALL);
+            if (books != null) { return books; }
+
+            books = await DbSet.ToListAsync();          
+
+            var toCache = JsonSerializer.Serialize(books);
+            _cache.SetString(CacheKeys.BOOK_GET_ALL, toCache, GetCacheOptions(15, 30));
 
             return books;
         }
