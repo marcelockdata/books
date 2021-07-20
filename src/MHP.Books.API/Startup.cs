@@ -46,6 +46,11 @@ namespace MHP.Books.API
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
             });
 
+            services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = "localhost:6379";
+            });
+
 
             services.AddIdentityConfig(Configuration);
 

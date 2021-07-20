@@ -39,6 +39,11 @@ namespace MHP.Books.API.Controllers
             return _mapper.Map<IEnumerable<BookViewModel>>(await _bookRepository.ObterTodos());
         }
 
+        [HttpGet("ObterTodosRedis")]
+        public async Task<IEnumerable<Book>> ObterTodosRedis()
+        {
+            return await _bookRepository.ObterTodosRedis();
+        }
 
         [HttpGet("ObterPorAutor/{autor}")]
         public async Task<ActionResult<IEnumerable<BookViewModel>>> ObterPorAutor(string autor)
